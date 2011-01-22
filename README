@@ -1,0 +1,80 @@
+uSwitch Coding Test
+===================
+
+The following is a possible representation of a gas plan that could be stored in some no-sql bullshit database.
+
+    {
+    	"supplier_name" : "Scottish Hydro Electric",
+    	"name" : "better plan",
+    	"annual_standing_charge" : 10000,
+    	"discounts" : [
+        {
+          "applies_to" : "whole-bill",
+          "value" : 5,
+          "value_type" : "percentage"
+          "cap" : null,
+        },
+        {
+          "applies_to" : "rates",
+          "value" : 1.0,
+          "value_type" : "teir-2"
+          "cap" : 50,
+        },
+        {
+          "applies_to" : "rates",
+          "value" : 0.6,
+          "value_type" : "teir-2"
+          "cap" : 30,
+        },
+    	],
+    	"rates" : [
+        {
+          "price" : 3.5,
+          "threshold" : 500,
+        },
+        {
+          "price" : 3.0,
+          "threshold" : null,
+        }
+    	]
+    }
+
+Using your favourite programming language (if its ruby or clojure) write an application that
+
+1. Given an annual gas usage (e.g. 25000 kWh) returns you a cost inclusive of VAT.
+2. Given an annual cost that has been charged for the plan (e.g. £600 inc VAT) return the usage
+
+What you need to know:
+======================
+
+VAT on energy is 5%
+
+All plan prices exclude vat.
+
+Annual Standing Charge
+----------------------
+
+A flat charged applied for the plan in pence
+
+Rates
+-----
+
+Are applied sequentially, up to their threshold which is specified in kWhs
+
+"price": the price in pence for the rate
+"threshold": the limit to which this price applies in kWh
+
+Discounts
+----------
+
+"applies_to" defines which bill part is applicable for this discount. The possible options are
+
+- **rates**: the total cost of the rates exclusive of annual standing charge
+- **whole-bill**: the sum of the rate cost and the annual standing charge 
+
+"value_type" defines the type of discount. The possible values are:
+
+- **percentage**: a percentage of the "applies_to" value
+- **tier-2**: applied to the second rate up to a capped value
+
+"cap" the maximum value that a person can receive for this discount
