@@ -144,6 +144,15 @@
                                     (apply combinator))]
               (fn [invoice] (discounts-fs invoice)))))
 
+(defmethod parse :vat
+  ([token] (let [vat (or (:content token) 0.15)]
+             (fn [invoice]
+               (let [total (:total invoice)
+                     vat-tax (* total vat)]
+                 (-> invoice
+                     (update-total vat-tax)
+                     (add-invoice-subtotal :vat vat-tax)))))))
+
 
 (defmethod parse :default
   ([token]  identity))
@@ -157,7 +166,8 @@
      (let [plan-tokens (map (fn [k] (make-token k (get plan k)))
                             ["annual_standing_charge"
                              "rates"
-                             "discounts"])
+                             "discounts"
+                             "vat"])
            build-invoice-fn (->> plan-tokens
                                  (map parse)
                                  (reverse)
