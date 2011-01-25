@@ -49,12 +49,12 @@
 (defn- invoice-subtotal
   "Different ways of aggregating the subtotals"
   ([invoice subtotal]
-     (condp = (keyword subtotal)
-         :whole-bill (let [subtotals (:subtotals invoice)]
-                        (+ (:tier-1 subtotals) (:tier-2 subtotals) (:annual_standing_charge subtotals)))
-         :rates      (let [subtotals (:subtotals invoice)]
-                        (+ (:tier-1 subtotals) (:tier-2 subtotals)))
-         ((keyword subtotal) (read-state invoice :subtotals)))))
+     (let [subtotals (:subtotals invoice)
+           subtotal (keyword subtotal)]
+       (condp = subtotal
+           :whole-bill (+ (:tier-1 subtotals) (:tier-2 subtotals) (:annual_standing_charge subtotals))
+           :rates      (+ (:tier-1 subtotals) (:tier-2 subtotals))
+           (subtotal subtotals)))))
 
 
 ;; plan parsers
